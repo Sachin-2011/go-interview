@@ -1,0 +1,873 @@
+{{define "content"}}
+<style>
+/* Interview Coach Specific Styles */
+.coach-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.question-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 16px !important;
+    margin-bottom: 16px !important;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-color: #d1d5db !important;
+}
+
+.question-card.pinned {
+    border-left-color: #f59e0b !important;
+    background: linear-gradient(to right, #fffbeb 0%, white 20%);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.question-card .accordion-button {
+    padding: 20px 24px;
+    border: none;
+    background: transparent !important;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.question-card .accordion-button:not(.collapsed) {
+    background: transparent !important;
+    box-shadow: none;
+}
+
+.question-card .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236366f1'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.question-card .accordion-body {
+    padding: 0 24px 24px;
+    background: #f9fafb;
+    border-radius: 0 0 16px 16px;
+}
+
+.tag-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.tag-badge.technical {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.tag-badge.role-specific {
+    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+    color: #9f1239;
+    border: 1px solid #f9a8d4;
+}
+
+.tag-badge.aptitude {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.question-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-right: 12px;
+}
+
+.pinned-icon {
+    color: #f59e0b;
+    font-size: 18px;
+    margin-left: 8px;
+}
+
+.topic-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
+    margin: 4px;
+    transition: all 0.2s ease;
+}
+
+.topic-tag:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #eef2ff;
+}
+
+.explanation-markdown p {
+    margin-bottom: 0.6rem;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.explanation-markdown h4,
+.explanation-markdown h5,
+.explanation-markdown h6 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.4rem;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.explanation-markdown code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+}
+
+.explanation-markdown .list-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.explanation-markdown .list-bullet {
+    color: #6366f1;
+    font-weight: 700;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -600px;
+    width: 600px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+}
+
+.side-panel.open {
+    right: 0;
+}
+
+.side-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1040;
+    display: none;
+}
+
+.side-panel-overlay.show {
+    display: block;
+}
+
+.chat-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.chat-message.user {
+    background-color: #e3f2fd;
+    margin-left: 20%;
+}
+
+.chat-message.assistant {
+    background-color: #f5f5f5;
+    margin-right: 20%;
+}
+
+.loading-skeleton {
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 80%);
+    }
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
+}
+
+.pin-btn.pinned {
+    color: #ffc107 !important;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>
+
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col">
+        <div class="hero-section hero-gradient text-center py-5">
+            <div class="hero-content">
+                <h1 class="display-5 fw-bold mb-3 text-white">
+                    <i class="bi bi-person-workspace me-2"></i>AI Interview Coach
+                </h1>
+                <p class="lead mb-4 text-white opacity-90">
+                    Prepare for your dream job with AI-powered interview questions
+                </p>
+				<div class="d-flex justify-content-center gap-2">
+					<a class="btn btn-light" href="/coach">
+						<i class="bi bi-grid"></i> Saved cards
+					</a>
+					<a class="btn btn-outline-light" href="/coach/session">
+						<i class="bi bi-plus-circle"></i> New prep
+					</a>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="coach-container">
+    <!-- Job Input Section -->
+    <div class="row mb-4" id="input-section">
+        <div class="col-lg-10 col-xl-9 mx-auto">
+            <div class="card shadow-sm border-0" style="border-radius: 18px; overflow: hidden;">
+                <div class="p-4" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #eef2ff;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-white text-primary fw-bold" style="border-radius: 999px;">Step 1</span>
+                        <span class="small opacity-90">Tell us about the role</span>
+                    </div>
+                    <h4 class="fw-bold mb-1">Enter Job Details</h4>
+                    <p class="mb-0" style="max-width: 720px;">We’ll generate tailored questions using your role and description. The more detail you add, the sharper the questions.</p>
+                </div>
+
+                <div class="card-body p-4" style="background: #f8fafc;">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="job-role" class="form-label fw-semibold d-flex align-items-center gap-2">
+                                <i class="bi bi-briefcase-fill text-primary"></i>
+                                Job Role <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="job-role" 
+                                   placeholder="e.g., Senior Backend Developer, Data Scientist, DevOps Engineer" 
+                                   style="border-radius: 12px; border: 2px solid #e5e7eb;">
+                            <div class="form-text">Use the exact title from the posting</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="job-description" class="form-label fw-semibold d-flex align-items-center gap-2">
+                                <i class="bi bi-file-text-fill text-primary"></i>
+                                Job Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="job-description" rows="9" 
+                                      placeholder="Paste the full job description including responsibilities, requirements, and required skills..." 
+                                      style="border-radius: 12px; border: 2px solid #e5e7eb; font-size: 14px;"></textarea>
+                            <div class="form-text">Include responsibilities, requirements, tech stack, and qualifications</div>
+                        </div>
+
+                        <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3 mt-2">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge" style="background: #dbeafe; color: #1e40af; padding: 10px 14px; border-radius: 10px;">40% Technical</span>
+                                <span class="badge" style="background: #fce7f3; color: #9f1239; padding: 10px 14px; border-radius: 10px;">30% Role-Specific</span>
+                                <span class="badge" style="background: #dcfce7; color: #166534; padding: 10px 14px; border-radius: 10px;">30% Behavioral</span>
+                            </div>
+                            <button id="generate-btn" class="btn btn-lg btn-primary" 
+                                    style="border-radius: 12px; padding: 12px 22px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border: none; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);">
+                                <i class="bi bi-stars me-2"></i>Generate Questions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="row mb-4 d-none" id="loading-section">
+        <div class="col">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Generating questions...</span>
+                </div>
+                <h5>Generating personalized interview questions...</h5>
+                <p class="text-muted">This may take a few seconds</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Section -->
+    <div class="row mb-4 d-none" id="questions-section">
+        <div class="col-12">
+            <!-- Questions Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">
+                        <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+                        Your Interview Questions
+                    </h3>
+                    <p class="text-muted mb-0">Personalized questions based on your job description</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="back-to-input-btn" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Edit Details
+                    </button>
+                    <button id="load-more-btn" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Load 10 More
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Questions Grid -->
+            <div id="questionsAccordion">
+                <!-- Questions will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Panel for Explanation and Chat -->
+<div class="side-panel-overlay" id="panel-overlay"></div>
+<div class="side-panel" id="explanation-panel">
+    <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">
+                <i class="bi bi-chat-left-text me-2"></i>Question Details
+            </h5>
+            <button class="btn btn-sm btn-outline-secondary" id="close-panel">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Original Question -->
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Question:</h6>
+                <p class="mb-0" id="panel-question"></p>
+            </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="mb-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-book me-2"></i>Detailed Explanation
+            </h6>
+            <div id="explanation-content" class="border-start border-4 border-primary ps-3">
+                <!-- Explanation will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="mb-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-chat-dots me-2"></i>Ask Follow-up Questions
+            </h6>
+            
+            <div class="chat-container mb-3" id="chat-messages">
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="form-control" id="followup-input" 
+                       placeholder="Ask a follow-up question...">
+                <button class="btn btn-primary" type="button" id="send-followup">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const initialSessionId = "{{.SessionID}}";
+
+// Global state
+let currentSessionId = null;
+let currentQuestionId = null;
+let currentQuestionText = null;
+let questionsList = [];
+
+// DOM Elements
+const jobRoleInput = document.getElementById('job-role');
+const jobDescriptionInput = document.getElementById('job-description');
+const generateBtn = document.getElementById('generate-btn');
+const loadMoreBtn = document.getElementById('load-more-btn');
+const inputSection = document.getElementById('input-section');
+const loadingSection = document.getElementById('loading-section');
+const questionsSection = document.getElementById('questions-section');
+const questionsAccordion = document.getElementById('questionsAccordion');
+const explanationPanel = document.getElementById('explanation-panel');
+const panelOverlay = document.getElementById('panel-overlay');
+const closePanelBtn = document.getElementById('close-panel');
+const followupInput = document.getElementById('followup-input');
+const sendFollowupBtn = document.getElementById('send-followup');
+
+// Generate questions
+generateBtn.addEventListener('click', async () => {
+    const jobRole = jobRoleInput.value.trim();
+    const jobDescription = jobDescriptionInput.value.trim();
+
+    if (!jobRole || !jobDescription) {
+        alert('Please fill in both job role and description');
+        return;
+    }
+
+    // Show loading
+    loadingSection.classList.remove('d-none');
+    questionsSection.classList.add('d-none');
+    generateBtn.disabled = true;
+
+    try {
+        const response = await fetch('/api/coach/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                job_role: jobRole,
+                job_description: jobDescription
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            currentSessionId = data.session_id;
+            questionsList = data.questions;
+            renderQuestions(data.questions);
+            inputSection.classList.add('d-none'); // Hide input form
+            questionsSection.classList.remove('d-none');
+        } else {
+            alert('Failed to generate questions: ' + (data.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to generate questions. Please try again.');
+    } finally {
+        loadingSection.classList.add('d-none');
+        generateBtn.disabled = false;
+    }
+});
+
+// Load more questions
+loadMoreBtn.addEventListener('click', async () => {
+    if (!currentSessionId) return;
+
+    const jobRole = jobRoleInput.value.trim();
+    const jobDescription = jobDescriptionInput.value.trim();
+
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Loading...';
+
+    try {
+        const response = await fetch('/api/coach/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                job_role: jobRole,
+                job_description: jobDescription,
+                session_id: currentSessionId
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            questionsList = [...questionsList, ...data.questions];
+            renderQuestions(data.questions, true); // Append mode
+        } else {
+            alert('Failed to load more questions: ' + (data.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load more questions. Please try again.');
+    } finally {
+        loadMoreBtn.disabled = false;
+        loadMoreBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i>Load 10 More';
+    }
+});
+
+// Render questions in accordion
+function renderQuestions(questions, append = false) {
+    if (!append) {
+        questionsAccordion.innerHTML = '';
+    }
+
+    questions.forEach((q, index) => {
+        const globalIndex = append ? questionsList.length - questions.length + index : index;
+        const categoryClass = q.category === 'technical' ? 'technical' : 
+                            q.category === 'role-specific' ? 'role-specific' : 'aptitude';
+        
+        const card = document.createElement('div');
+        card.className = `accordion-item question-card ${q.is_pinned ? 'pinned' : ''}`;
+        card.dataset.questionId = q.id;
+        
+        card.innerHTML = `
+            <h2 class="accordion-header" id="heading${q.id}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#collapse${q.id}" aria-expanded="false">
+                    <div class="d-flex align-items-start w-100 me-3">
+                        <span class="question-number">${globalIndex + 1}</span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2 flex-wrap">
+                                <span class="badge tag-badge ${categoryClass}">${q.category}</span>
+                                ${q.is_pinned ? '<i class="bi bi-pin-angle-fill pinned-icon"></i>' : ''}
+                            </div>
+                            <div style="font-size: 16px; line-height: 1.5;">${q.question}</div>
+                        </div>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapse${q.id}" class="accordion-collapse collapse" 
+                 aria-labelledby="heading${q.id}">
+                <div class="accordion-body">
+                    <div class="alert alert-light border-start border-primary border-4 mb-3" style="background: #f0f9ff;">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-info-circle-fill text-primary mt-1"></i>
+                            <div>
+                                <strong class="d-block mb-1">Why this question matters:</strong>
+                                <p class="mb-0 text-muted">${q.explanation}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <strong class="d-block mb-2" style="color: #6b7280;">
+                            <i class="bi bi-tags-fill me-1"></i>Related Topics:
+                        </strong>
+                        <div>
+                            ${q.tags.map(tag => `<span class="topic-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary learn-more-btn" data-question-id="${q.id}" style="border-radius: 10px;">
+                            <i class="bi bi-book-half me-2"></i>Get Detailed Explanation
+                        </button>
+                        <button class="btn btn-outline-warning pin-btn ${q.is_pinned ? 'pinned' : ''}" 
+                                data-question-id="${q.id}" data-pinned="${q.is_pinned}" style="border-radius: 10px;">
+                            <i class="bi bi-pin-angle${q.is_pinned ? '-fill' : ''} me-1"></i>
+                            ${q.is_pinned ? 'Unpin Question' : 'Pin to Top'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        questionsAccordion.appendChild(card);
+    });
+
+    // Add event listeners
+    document.querySelectorAll('.learn-more-btn').forEach(btn => {
+        btn.addEventListener('click', handleLearnMore);
+    });
+
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+        btn.addEventListener('click', handlePin);
+    });
+}
+
+// Load an existing saved session by ID and hydrate the UI
+async function loadExistingSession(sessionId) {
+    try {
+        const response = await fetch(`/api/coach/session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await response.json();
+
+        if (!data.success || !data.session) {
+            throw new Error(data.message || 'Unable to load session');
+        }
+
+        const session = data.session;
+        currentSessionId = session.session_id;
+        jobRoleInput.value = session.job_role || '';
+        jobDescriptionInput.value = session.job_description || '';
+
+        questionsList = (session.questions || []).slice();
+        questionsList.sort((a, b) => {
+            const pinDelta = Number(b.is_pinned) - Number(a.is_pinned);
+            if (pinDelta !== 0) return pinDelta;
+            return new Date(b.generated_at) - new Date(a.generated_at);
+        });
+
+        inputSection.classList.add('d-none'); // Hide input form
+        questionsSection.classList.remove('d-none');
+        renderQuestions(questionsList);
+        inputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+        console.error(error);
+        alert(error.message || 'Failed to load saved session');
+    } finally {
+        loadingSection.classList.add('d-none');
+        generateBtn.disabled = false;
+    }
+}
+
+function renderExplanation(markdown) {
+    if (!markdown) return '<p class="text-muted">No explanation provided.</p>';
+
+    let text = markdown.replace(/\r/g, '');
+
+    // Remove fenced code blocks markers while keeping content
+    text = text.replace(/```[a-zA-Z0-9]*\n([\s\S]*?)```/g, '$1');
+
+    // Headings
+    text = text.replace(/^###\s+(.*)$/gm, '<h6>$1</h6>');
+    text = text.replace(/^##\s+(.*)$/gm, '<h5>$1</h5>');
+    text = text.replace(/^#\s+(.*)$/gm, '<h4>$1</h4>');
+
+    // Bold / code
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Bullet lists
+    text = text.replace(/^\s*[-*]\s+(.*)$/gm, '<div class="list-row"><span class="list-bullet">•</span><span>$1</span></div>');
+
+    // Paragraph breaks
+    text = text.replace(/\n{2,}/g, '</p><p>');
+
+    return `<div class="explanation-markdown"><p>${text}</p></div>`;
+}
+
+// Handle Learn More
+async function handleLearnMore(e) {
+    const questionId = e.currentTarget.dataset.questionId;
+    const question = questionsList.find(q => q.id === questionId);
+    
+    if (!question) return;
+
+    currentQuestionId = questionId;
+    currentQuestionText = question.question;
+
+    // Update panel question
+    document.getElementById('panel-question').textContent = question.question;
+    
+    // Clear chat
+    document.getElementById('chat-messages').innerHTML = '';
+    
+    // Show panel
+    explanationPanel.classList.add('open');
+    panelOverlay.classList.add('show');
+
+    // Show loading in explanation
+    document.getElementById('explanation-content').innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading explanation...</span>
+            </div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch('/api/coach/explain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question_id: questionId,
+                session_id: currentSessionId,
+                question: question.question
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('explanation-content').innerHTML = renderExplanation(data.explanation);
+        } else {
+            document.getElementById('explanation-content').innerHTML = 
+                `<p class="text-danger">Failed to load explanation</p>`;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('explanation-content').innerHTML = 
+            `<p class="text-danger">Error loading explanation</p>`;
+    }
+}
+
+// Handle Pin/Unpin
+async function handlePin(e) {
+    const btn = e.currentTarget;
+    const questionId = btn.dataset.questionId;
+    const isPinned = btn.dataset.pinned === 'true';
+
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/coach/pin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question_id: questionId,
+                session_id: currentSessionId,
+                pin: !isPinned
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Update local state
+            const question = questionsList.find(q => q.id === questionId);
+            if (question) {
+                question.is_pinned = !isPinned;
+            }
+
+            // Update UI
+            btn.dataset.pinned = !isPinned;
+            btn.classList.toggle('pinned');
+            btn.innerHTML = `<i class="bi bi-pin-angle${!isPinned ? '-fill' : ''} me-1"></i>${!isPinned ? 'Unpin' : 'Pin'}`;
+
+            // Update card styling
+            const card = btn.closest('.question-card');
+            if (!isPinned) {
+                card.classList.add('pinned');
+                // Move to top
+                questionsAccordion.prepend(card);
+            } else {
+                card.classList.remove('pinned');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to pin/unpin question');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// Handle Follow-up
+sendFollowupBtn.addEventListener('click', sendFollowup);
+followupInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendFollowup();
+    }
+});
+
+async function sendFollowup() {
+    const message = followupInput.value.trim();
+    if (!message || !currentQuestionId) return;
+
+    // Add user message to chat
+    addChatMessage(message, 'user');
+    followupInput.value = '';
+
+    // Show loading
+    const loadingId = addChatMessage('Thinking...', 'assistant', true);
+
+    try {
+        const response = await fetch('/api/coach/followup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question_id: currentQuestionId,
+                session_id: currentSessionId,
+                original_question: currentQuestionText,
+                followup_message: message
+            })
+        });
+
+        const data = await response.json();
+
+        // Remove loading message
+        document.getElementById(loadingId)?.remove();
+
+        if (data.success) {
+            addChatMessage(data.response, 'assistant');
+        } else {
+            addChatMessage('Sorry, I could not process your question.', 'assistant');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById(loadingId)?.remove();
+        addChatMessage('Error: Failed to get response', 'assistant');
+    }
+}
+
+function addChatMessage(content, role, isLoading = false) {
+    const chatContainer = document.getElementById('chat-messages');
+    const messageId = 'msg-' + Date.now();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.id = messageId;
+    messageDiv.className = `chat-message ${role}`;
+    if (isLoading) {
+        messageDiv.classList.add('loading-skeleton');
+    }
+    messageDiv.innerHTML = `
+        <div class="small text-muted mb-1">${role === 'user' ? 'You' : 'AI Coach'}</div>
+        <div>${content.replace(/\n/g, '<br>')}</div>
+    `;
+    
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    return messageId;
+}
+
+// Close panel
+closePanelBtn.addEventListener('click', closePanel);
+panelOverlay.addEventListener('click', closePanel);
+
+function closePanel() {
+    explanationPanel.classList.remove('open');
+    panelOverlay.classList.remove('show');
+}
+
+// Close panel on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closePanel();
+    }
+});
+
+// Back to input button handler
+const backToInputBtn = document.getElementById('back-to-input-btn');
+if (backToInputBtn) {
+    backToInputBtn.addEventListener('click', () => {
+        questionsSection.classList.add('d-none');
+        inputSection.classList.remove('d-none');
+        inputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (initialSessionId) {
+        generateBtn.disabled = true;
+        loadingSection.classList.remove('d-none');
+        loadExistingSession(initialSessionId);
+    }
+});
+</script>
+
+{{end}}

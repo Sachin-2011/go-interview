@@ -783,3 +783,23 @@ func (ai *AIService) parseHint(response string) string {
 	}
 	return hint
 }
+
+// GenerateText is a general-purpose text generation method for the AI service
+// It accepts a prompt and max tokens, returning the AI's response as plain text
+func (ai *AIService) GenerateText(prompt string, maxTokens int) (string, error) {
+	// Store original max tokens
+	originalMaxTokens := ai.config.MaxTokens
+
+	// Temporarily set max tokens if specified
+	if maxTokens > 0 {
+		ai.config.MaxTokens = maxTokens
+	}
+
+	// Call the LLM
+	response, err := ai.callLLM(prompt)
+
+	// Restore original max tokens
+	ai.config.MaxTokens = originalMaxTokens
+
+	return response, err
+}

@@ -1,3 +1,4 @@
+// hello - Interview Simulator Web Handlers
 package handlers
 
 import (
@@ -651,7 +652,7 @@ func (h *WebHandler) countPackageChallengeSubmissions(packageName, challengeID s
 func (h *WebHandler) createPackageLeaderboard(packageName string, challenges []*models.PackageChallenge) []models.PackageScoreboardEntry {
 	var leaderboard []models.PackageScoreboardEntry
 	userStats := make(map[string]*userPackageStats)
-	
+
 	// Load sponsors for package leaderboard (reuse from API handler)
 	// Create a temporary API handler instance to access LoadSponsors
 	tempHandler := &APIHandler{}
@@ -745,4 +746,51 @@ type userPackageStats struct {
 	completedCount      int
 	lastSubmission      time.Time
 	challengesCompleted map[string]bool
+}
+
+// InterviewCoachLandingPage renders the saved sessions dashboard
+func (h *WebHandler) InterviewCoachLandingPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.New("").Funcs(utils.GetTemplateFuncs()).ParseFS(h.content, "templates/base.html", "templates/interview_coach_landing.html")
+	if err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, "Failed to parse template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	username := h.getUsernameFromCookie(r)
+
+	data := struct {
+		Username string
+	}{
+		Username: username,
+	}
+
+	if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
+		log.Printf("Template execution error: %v", err)
+	}
+}
+
+// InterviewCoachPage renders a specific interview coaching session
+func (h *WebHandler) InterviewCoachPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.New("").Funcs(utils.GetTemplateFuncs()).ParseFS(h.content, "templates/base.html", "templates/interview_coach.html")
+	if err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, "Failed to parse template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	username := h.getUsernameFromCookie(r)
+	sessionID := r.URL.Query().Get("session_id")
+
+	data := struct {
+		Username  string
+		SessionID string
+	}{
+		Username:  username,
+		SessionID: sessionID,
+	}
+
+	if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
+		log.Printf("Template execution error: %v", err)
+	}
 }

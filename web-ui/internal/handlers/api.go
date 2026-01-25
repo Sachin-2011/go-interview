@@ -1,3 +1,4 @@
+// hello - Interview Simulator API Handlers
 package handlers
 
 import (
@@ -77,7 +78,7 @@ func (h *APIHandler) scrapeSponsorsFromGitHub() map[string]bool {
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	// Fetch the public sponsors page
-	url := "https://github.com/sponsors/RezaSi"
+	url := "https://github.com/sponsors/Sachin-2011"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Printf("Error creating request: %v\n", err)
@@ -115,7 +116,7 @@ func (h *APIHandler) scrapeSponsorsFromGitHub() map[string]bool {
 		if len(match) >= 2 {
 			username := match[1]
 			// Filter out the repository owner from sponsors list
-			if username != "RezaSi" {
+			if username != "Sachin-2011" {
 				sponsorMap[username] = true
 			}
 		}
@@ -131,7 +132,7 @@ func (h *APIHandler) scrapeSponsorsFromGitHub() map[string]bool {
 			if len(match) >= 2 {
 				username := match[1]
 				// Filter out common GitHub paths that aren't usernames
-				if username != "sponsors" && username != "github" && username != "RezaSi" &&
+				if username != "sponsors" && username != "github" && username != "Sachin-2011" &&
 					!strings.HasPrefix(username, "orgs/") &&
 					!strings.Contains(username, "/") &&
 					len(username) > 2 { // reasonable username length
@@ -152,6 +153,7 @@ type APIHandler struct {
 	executionService  *services.ExecutionService
 	packageService    *services.PackageService
 	aiService         *services.AIService
+	coachService      *services.InterviewCoachService
 	submissions       []models.Submission
 }
 
@@ -163,6 +165,7 @@ func NewAPIHandler(
 	executionService *services.ExecutionService,
 	packageService *services.PackageService,
 	aiService *services.AIService,
+	coachService *services.InterviewCoachService,
 ) *APIHandler {
 	return &APIHandler{
 		challengeService:  challengeService,
@@ -171,6 +174,7 @@ func NewAPIHandler(
 		executionService:  executionService,
 		packageService:    packageService,
 		aiService:         aiService,
+		coachService:      coachService,
 		submissions:       make([]models.Submission, 0),
 	}
 }
@@ -1280,4 +1284,256 @@ func (h *APIHandler) GetSponsorsDebug(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// ==================== INTERVIEW COACH API HANDLERS ====================
+
+// CoachGenerate generates interview questions based on job role and description
+func (h *APIHandler) CoachGenerate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req models.GenerateQuestionsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate input
+	if req.JobRole == "" || req.JobDescription == "" {
+		http.Error(w, "Job role and description are required", http.StatusBadRequest)
+		return
+	}
+
+	// Get username from cookie
+	username := h.getUsernameFromCookie(r)
+	if username == "" {
+		username = "anonymous"
+	}
+
+	// Generate questions
+	response, err := h.coachService.GenerateQuestions(username, req.JobRole, req.JobDescription, req.SessionID)
+	if err != nil {
+		response = &models.GenerateQuestionsResponse{
+			Success: false,
+			Message: fmt.Sprintf("Failed to generate questions: %v", err),
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// CoachExplain provides detailed explanation for a question
+func (h *APIHandler) CoachExplain(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req models.ExplainQuestionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate input
+	if req.QuestionID == "" || req.Question == "" {
+		http.Error(w, "Question ID and question text are required", http.StatusBadRequest)
+		return
+	}
+
+	// Get explanation
+	response, err := h.coachService.ExplainQuestion(req.SessionID, req.QuestionID, req.Question)
+	if err != nil {
+		response = &models.ExplainQuestionResponse{
+			Success: false,
+			Message: fmt.Sprintf("Failed to generate explanation: %v", err),
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// CoachFollowup handles follow-up questions in the conversation
+func (h *APIHandler) CoachFollowup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req models.FollowupQuestionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate input
+	if req.QuestionID == "" || req.FollowupMessage == "" {
+		http.Error(w, "Question ID and followup message are required", http.StatusBadRequest)
+		return
+	}
+
+	// Get username from cookie
+	username := h.getUsernameFromCookie(r)
+	if username == "" {
+		username = "anonymous"
+	}
+
+	// Handle followup
+	response, err := h.coachService.HandleFollowup(username, req.SessionID, req.QuestionID, req.OriginalQuestion, req.FollowupMessage)
+	if err != nil {
+		response = &models.FollowupQuestionResponse{
+			Success: false,
+			Message: fmt.Sprintf("Failed to process followup: %v", err),
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// CoachPin pins or unpins a question
+func (h *APIHandler) CoachPin(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req models.PinQuestionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate input
+	if req.QuestionID == "" || req.SessionID == "" {
+		http.Error(w, "Question ID and session ID are required", http.StatusBadRequest)
+		return
+	}
+
+	// Pin/unpin question
+	response, err := h.coachService.PinQuestion(req.SessionID, req.QuestionID, req.Pin)
+	if err != nil {
+		response = &models.PinQuestionResponse{
+			Success: false,
+			Message: fmt.Sprintf("Failed to pin question: %v", err),
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// CoachSessionsList returns saved sessions for the current user
+func (h *APIHandler) CoachSessionsList(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	username := h.getUsernameFromCookie(r)
+	if username == "" {
+		http.Error(w, "Username required", http.StatusBadRequest)
+		return
+	}
+
+	sessions, err := h.coachService.ListSessions(username)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.ListSessionsResponse{Success: false, Message: err.Error()})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(models.ListSessionsResponse{Sessions: sessions, Success: true})
+}
+
+// CoachSessionGet returns a specific session with questions
+func (h *APIHandler) CoachSessionGet(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	username := h.getUsernameFromCookie(r)
+	if username == "" {
+		http.Error(w, "Username required", http.StatusBadRequest)
+		return
+	}
+
+	sessionID := r.URL.Query().Get("session_id")
+	if sessionID == "" {
+		http.Error(w, "session_id required", http.StatusBadRequest)
+		return
+	}
+
+	session, err := h.coachService.GetSession(sessionID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(models.SessionDetailsResponse{Success: false, Message: err.Error()})
+		return
+	}
+
+	if session.Username != username {
+		w.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(w).Encode(models.SessionDetailsResponse{Success: false, Message: "unauthorized"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(models.SessionDetailsResponse{Session: session, Success: true})
+}
+
+// CoachSessionDelete deletes a saved session
+func (h *APIHandler) CoachSessionDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "DELETE" && r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	username := h.getUsernameFromCookie(r)
+	if username == "" {
+		http.Error(w, "Username required", http.StatusBadRequest)
+		return
+	}
+
+	var req struct {
+		SessionID string `json:"session_id"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if req.SessionID == "" {
+		http.Error(w, "session_id required", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.coachService.DeleteSession(req.SessionID, username); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.DeleteSessionResponse{Success: false, Message: err.Error()})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(models.DeleteSessionResponse{Success: true, Message: "Session deleted"})
+}
+
+// Helper method to get username from cookie
+func (h *APIHandler) getUsernameFromCookie(r *http.Request) string {
+	cookie, err := r.Cookie("username")
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
 }

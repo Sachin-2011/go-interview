@@ -1,3 +1,4 @@
+// hello - Interview Simulator Server Routes
 package server
 
 import (
@@ -23,6 +24,7 @@ type Server struct {
 	executionService  *services.ExecutionService
 	packageService    *services.PackageService
 	aiService         *services.AIService
+	coachService      *services.InterviewCoachService
 }
 
 // NewServer creates a new server instance
@@ -34,6 +36,7 @@ func NewServer(
 	executionService *services.ExecutionService,
 	packageService *services.PackageService,
 	aiService *services.AIService,
+	coachService *services.InterviewCoachService,
 ) *Server {
 	return &Server{
 		content:           content,
@@ -43,6 +46,7 @@ func NewServer(
 		executionService:  executionService,
 		packageService:    packageService,
 		aiService:         aiService,
+		coachService:      coachService,
 	}
 }
 
@@ -61,6 +65,7 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 		s.executionService,
 		s.packageService,
 		s.aiService,
+		s.coachService,
 	)
 
 	webHandler := handlers.NewWebHandler(
@@ -93,6 +98,15 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/api/ai/interviewer-questions", apiHandler.AIInterviewerQuestions)
 	mux.HandleFunc("/api/ai/code-hint", apiHandler.AICodeHint)
 	mux.HandleFunc("/api/ai/debug", apiHandler.AIDebugResponse)
+
+	// Interview Coach API routes
+	mux.HandleFunc("/api/coach/generate", apiHandler.CoachGenerate)
+	mux.HandleFunc("/api/coach/explain", apiHandler.CoachExplain)
+	mux.HandleFunc("/api/coach/followup", apiHandler.CoachFollowup)
+	mux.HandleFunc("/api/coach/pin", apiHandler.CoachPin)
+	mux.HandleFunc("/api/coach/sessions", apiHandler.CoachSessionsList)
+	mux.HandleFunc("/api/coach/session", apiHandler.CoachSessionGet)
+	mux.HandleFunc("/api/coach/session/delete", apiHandler.CoachSessionDelete)
 
 	// GitHub webhook route
 	mux.HandleFunc("/webhook/github", apiHandler.GitHubWebhookHandler)
@@ -151,6 +165,8 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/", webHandler.HomePage)
 	mux.HandleFunc("/challenge/", webHandler.ChallengePage)
 	mux.HandleFunc("/interview", webHandler.InterviewPage)
+	mux.HandleFunc("/coach", webHandler.InterviewCoachLandingPage)
+	mux.HandleFunc("/coach/session", webHandler.InterviewCoachPage)
 	mux.HandleFunc("/scoreboard", webHandler.ScoreboardPage)
 	mux.HandleFunc("/scoreboard/", webHandler.ScoreChallengeHandler)
 	mux.HandleFunc("/packages/", func(w http.ResponseWriter, r *http.Request) {

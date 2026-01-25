@@ -1,0 +1,476 @@
+{{define "content"}}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+.coach-landing {
+	font-family: 'Space Grotesk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.coach-hero {
+	background: linear-gradient(135deg, #0f172a, #1d4ed8);
+	color: #f8fafc;
+	border-radius: 28px;
+	padding: 48px;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35);
+}
+
+.coach-hero::after {
+	content: '';
+	position: absolute;
+	width: 220px;
+	height: 220px;
+	right: -60px;
+	top: -60px;
+	background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 60%);
+	filter: blur(4px);
+}
+
+.coach-hero .badge-soft {
+	background: rgba(255, 255, 255, 0.08);
+	color: #e0e7ff;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 999px;
+	padding: 10px 16px;
+	font-weight: 600;
+}
+
+.metric-card {
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	padding: 14px 16px;
+	color: #e2e8f0;
+	backdrop-filter: blur(12px);
+}
+
+.metric-card h6 {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 11px;
+	color: #cbd5f5;
+	margin-bottom: 6px;
+}
+
+.metric-card .metric-value {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.glass-card {
+	border: 1px solid #e5e7eb;
+	border-radius: 16px;
+	box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+	border-color: #d4d7dd;
+}
+
+.card-pill {
+	font-size: 12px;
+	padding: 6px 10px;
+	border-radius: 999px;
+	border: 1px solid #e5e7eb;
+	background: #f8fafc;
+}
+
+.description-clamp {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	color: #475569;
+}
+
+.action-chip {
+	border-radius: 10px;
+	padding: 6px 10px;
+	background: #0f172a;
+	color: #e2e8f0;
+}
+
+.session-grid {
+	background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+	border-radius: 20px;
+	padding: 24px;
+}
+
+.empty-state {
+	border: 2px dashed #cbd5e1;
+	border-radius: 18px;
+	padding: 36px;
+	background: #f8fafc;
+}
+
+.btn-contrast {
+	background: #0f172a;
+	color: #f8fafc;
+	border-radius: 12px;
+	font-weight: 600;
+	padding: 12px 18px;
+	box-shadow: 0 10px 25px rgba(15, 23, 42, 0.24);
+	border: none;
+}
+
+.btn-contrast:hover {
+	background: #111827;
+	color: #f8fafc;
+}
+
+.btn-outline-light-alt {
+	color: #e0e7ff;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 12px;
+	padding: 12px 18px;
+	font-weight: 600;
+}
+
+.badge-muted {
+	background: #f1f5f9;
+	color: #334155;
+	border-radius: 10px;
+	padding: 6px 10px;
+	font-weight: 600;
+}
+
+.soft-divider {
+	height: 1px;
+	background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+}
+
+.session-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.session-footer .btn {
+	border-radius: 12px;
+}
+
+.session-meta {
+	font-size: 12px;
+	color: #64748b;
+}
+</style>
+
+<div class="coach-landing container py-4 py-lg-5">
+	<div class="coach-hero mb-4">
+		<div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-3">
+			<div>
+				<div class="badge-soft mb-3 d-inline-flex align-items-center gap-2">
+					<i class="bi bi-lightning-charge"></i>
+					<span>AI Interview Coach</span>
+				</div>
+				<h1 class="fw-bold mb-3">Welcome back{{if .Username}}, {{.Username}}{{end}}</h1>
+				<p class="mb-4" style="max-width: 640px; color: #cbd5e1;">
+					Stay on top of your prep with saved roles, quick access to questions, and a fast way to start your next session.
+				</p>
+				<div class="d-flex flex-wrap align-items-center gap-2">
+					<button class="btn btn-light btn-lg fw-semibold" data-bs-toggle="modal" data-bs-target="#newSessionModal">
+						<i class="bi bi-plus-circle me-2"></i>Start New Prep
+					</button>
+					<a class="btn btn-outline-light-alt btn-lg" href="#saved-sessions">
+						<i class="bi bi-grid me-2"></i>View Saved Cards
+					</a>
+				</div>
+			</div>
+			<div class="d-flex flex-column gap-2" style="min-width: 280px;">
+				<div class="metric-card">
+					<h6>Total Preps</h6>
+					<div class="metric-value" id="metric-preps">--</div>
+				</div>
+				<div class="metric-card">
+					<h6>Questions Saved</h6>
+					<div class="metric-value" id="metric-questions">--</div>
+				</div>
+				<div class="metric-card">
+					<h6>Last Updated</h6>
+					<div class="metric-value" id="metric-updated">--</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex align-items-center justify-content-between mb-3" id="saved-sessions">
+		<div>
+			<p class="text-uppercase text-muted fw-bold small mb-1">Saved Sessions</p>
+			<h4 class="fw-bold mb-0">Your interview prep cards</h4>
+		</div>
+		<div class="d-flex align-items-center gap-2">
+			<div class="badge-muted">Auto-saves after generation</div>
+			<button class="btn btn-outline-secondary" id="refresh-sessions">
+				<i class="bi bi-arrow-clockwise me-1"></i>Refresh
+			</button>
+		</div>
+	</div>
+
+	<div class="session-grid">
+		<div class="row g-3" id="session-grid"></div>
+		<div class="empty-state text-center d-none" id="empty-state">
+			<div class="mb-3">
+				<span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2">No cards yet</span>
+			</div>
+			<h5 class="fw-bold mb-2">Start your first prep</h5>
+			<p class="text-muted mb-3">Create a new role card to keep your questions and notes in one place.</p>
+			<button class="btn btn-contrast" data-bs-toggle="modal" data-bs-target="#newSessionModal">
+				<i class="bi bi-plus-circle me-2"></i>Start New Prep
+			</button>
+		</div>
+	</div>
+</div>
+
+<!-- New session modal -->
+<div class="modal fade" id="newSessionModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+			<div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px 20px 0 0; padding: 24px 32px;">
+				<div>
+					<h4 class="modal-title fw-bold text-white mb-1">
+						<i class="bi bi-stars me-2"></i>Create New Prep Card
+					</h4>
+					<p class="text-white opacity-90 mb-0 small">AI will generate 10 tailored interview questions</p>
+				</div>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="padding: 32px;">
+				<div class="alert alert-info border-0 d-flex align-items-start gap-2 mb-4" style="background: #e0f2fe; border-radius: 12px;">
+					<i class="bi bi-info-circle-fill text-primary mt-1"></i>
+					<div class="small">
+						<strong>Tip:</strong> The more detailed your job description, the better the AI-generated questions will match your needs.
+					</div>
+				</div>
+				<form id="new-session-form" class="needs-validation" novalidate>
+					<div class="mb-4">
+						<label class="form-label fw-bold d-flex align-items-center gap-2">
+							<i class="bi bi-briefcase text-primary"></i>
+							Job Role
+							<span class="text-danger">*</span>
+						</label>
+						<input type="text" class="form-control form-control-lg" id="modal-job-role" 
+							placeholder="e.g., Senior Backend Developer, Data Scientist, DevOps Engineer" 
+							style="border-radius: 12px; border: 2px solid #e5e7eb;" required>
+						<div class="invalid-feedback">Please enter a job role.</div>
+						<div class="form-text">Enter the exact position title from the job posting</div>
+					</div>
+					<div class="mb-4">
+						<label class="form-label fw-bold d-flex align-items-center gap-2">
+							<i class="bi bi-file-text text-primary"></i>
+							Job Description
+							<span class="text-danger">*</span>
+						</label>
+						<textarea class="form-control" rows="8" id="modal-job-description" 
+							placeholder="Paste the full job description including responsibilities, requirements, and required skills..." 
+							style="border-radius: 12px; border: 2px solid #e5e7eb; font-size: 14px;" required></textarea>
+						<div class="invalid-feedback">Please add a job description.</div>
+						<div class="form-text">Include all details: responsibilities, requirements, tech stack, and qualifications</div>
+					</div>
+					<div class="d-flex gap-2 p-3 rounded" style="background: #f8fafc; border-radius: 12px;">
+						<span class="badge" style="background: #dbeafe; color: #1e40af; padding: 8px 12px; border-radius: 8px;">40% Technical</span>
+						<span class="badge" style="background: #fce7f3; color: #9f1239; padding: 8px 12px; border-radius: 8px;">30% Role-Specific</span>
+						<span class="badge" style="background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 8px;">30% Behavioral</span>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer border-0" style="padding: 20px 32px 32px;">
+				<button type="button" class="btn btn-lg btn-light" data-bs-dismiss="modal" style="border-radius: 12px; padding: 12px 24px;">
+					<i class="bi bi-x-circle me-1"></i>Cancel
+				</button>
+				<button type="submit" form="new-session-form" class="btn btn-lg btn-primary" id="create-session-btn" 
+					style="border-radius: 12px; padding: 12px 28px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
+					<i class="bi bi-stars me-2"></i>Generate Questions
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+const sessionGrid = document.getElementById('session-grid');
+const emptyState = document.getElementById('empty-state');
+const refreshBtn = document.getElementById('refresh-sessions');
+const metrics = {
+	preps: document.getElementById('metric-preps'),
+	questions: document.getElementById('metric-questions'),
+	updated: document.getElementById('metric-updated'),
+};
+
+const newSessionForm = document.getElementById('new-session-form');
+const createSessionBtn = document.getElementById('create-session-btn');
+const modalRoleInput = document.getElementById('modal-job-role');
+const modalDescInput = document.getElementById('modal-job-description');
+
+function formatDate(ts) {
+	if (!ts) return '--';
+	const d = new Date(ts);
+	return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function renderMetrics(sessions) {
+	const totalPreps = sessions.length;
+	const totalQuestions = sessions.reduce((sum, s) => sum + (s.total_questions || 0), 0);
+	const latest = sessions
+		.map((s) => s.last_updated_at)
+		.filter(Boolean)
+		.sort((a, b) => new Date(b) - new Date(a))[0];
+
+	metrics.preps.textContent = totalPreps || '--';
+	metrics.questions.textContent = totalQuestions || '--';
+	metrics.updated.textContent = latest ? formatDate(latest) : '—';
+}
+
+function renderSessions(sessions) {
+	sessionGrid.innerHTML = '';
+
+	const sorted = [...sessions].sort((a, b) => new Date(b.last_updated_at) - new Date(a.last_updated_at));
+	if (sorted.length === 0) {
+		emptyState.classList.remove('d-none');
+		return;
+	}
+
+	emptyState.classList.add('d-none');
+
+	sorted.forEach((session) => {
+		const card = document.createElement('div');
+		card.className = 'col-12 col-md-6 col-lg-4';
+		card.innerHTML = `
+			<div class="card glass-card h-100">
+				<div class="card-body d-flex flex-column gap-3">
+					<div class="d-flex align-items-center justify-content-between">
+						<span class="card-pill">${session.total_questions || 0} questions</span>
+						<span class="action-chip"><i class="bi bi-clock-history me-1"></i>${formatDate(session.last_updated_at)}</span>
+					</div>
+					<div>
+						<h5 class="fw-bold mb-2">${session.job_role}</h5>
+						<p class="description-clamp mb-0">${session.job_description}</p>
+					</div>
+					<div class="soft-divider"></div>
+					<div class="session-footer">
+						<div class="session-meta">
+							<span class="d-block">Created ${formatDate(session.created_at)}</span>
+						</div>
+						<div class="d-flex gap-2">
+							<button class="btn btn-outline-danger btn-sm" data-action="delete" data-session-id="${session.session_id}" aria-label="Delete session">
+								<i class="bi bi-trash"></i>
+							</button>
+							<button class="btn btn-primary btn-sm" data-action="open" data-session-id="${session.session_id}">
+								Open
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		`;
+		sessionGrid.appendChild(card);
+	});
+}
+
+async function loadSessions() {
+	try {
+		const res = await fetch('/api/coach/sessions');
+		const data = await res.json();
+		if (!data.success) {
+			throw new Error(data.message || 'Failed to load sessions');
+		}
+
+		renderMetrics(data.sessions || []);
+		renderSessions(data.sessions || []);
+	} catch (err) {
+		console.error(err);
+		emptyState.classList.remove('d-none');
+	}
+}
+
+async function deleteSession(sessionId) {
+	const confirmed = confirm('Delete this prep card permanently?');
+	if (!confirmed) return;
+
+	try {
+		const res = await fetch('/api/coach/session/delete', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ session_id: sessionId }),
+		});
+
+		const data = await res.json();
+		if (!data.success) {
+			throw new Error(data.message || 'Failed to delete session');
+		}
+
+		loadSessions();
+	} catch (err) {
+		alert(err.message || 'Could not delete session');
+	}
+}
+
+function handleCardActions(event) {
+	const openBtn = event.target.closest('[data-action="open"]');
+	const deleteBtn = event.target.closest('[data-action="delete"]');
+
+	if (openBtn) {
+		const sessionId = openBtn.getAttribute('data-session-id');
+		window.location.href = `/coach/session?session_id=${encodeURIComponent(sessionId)}`;
+	}
+
+	if (deleteBtn) {
+		const sessionId = deleteBtn.getAttribute('data-session-id');
+		deleteSession(sessionId);
+	}
+}
+
+async function createSession(event) {
+	event.preventDefault();
+	if (!newSessionForm.checkValidity()) {
+		newSessionForm.classList.add('was-validated');
+		return;
+	}
+
+	createSessionBtn.disabled = true;
+	createSessionBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+
+	try {
+		const body = {
+			job_role: modalRoleInput.value.trim(),
+			job_description: modalDescInput.value.trim(),
+		};
+
+		const res = await fetch('/api/coach/generate', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body),
+		});
+
+		const data = await res.json();
+		if (!data.success) {
+			throw new Error(data.message || 'Failed to create session');
+		}
+
+		window.location.href = `/coach/session?session_id=${encodeURIComponent(data.session_id)}`;
+	} catch (err) {
+		alert(err.message || 'Could not create session');
+	} finally {
+		createSessionBtn.disabled = false;
+		createSessionBtn.innerHTML = '<i class="bi bi-stars me-1"></i>Create and open';
+	}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	loadSessions();
+	if (sessionGrid) {
+		sessionGrid.addEventListener('click', handleCardActions);
+	}
+	if (refreshBtn) {
+		refreshBtn.addEventListener('click', loadSessions);
+	}
+	if (newSessionForm) {
+		newSessionForm.addEventListener('submit', createSession);
+	}
+});
+</script>
+{{end}}

@@ -12,27 +12,8 @@
                     <a href="#challenges" class="btn btn-light px-4">
                         <i class="bi bi-play-circle me-2"></i>Browse Challenges
                     </a>
-                    <a href="https://github.com/RezaSi/go-interview-practice" class="btn btn-outline-light px-4" target="_blank">
+                    <a href="https://github.com/Sachin-2011/go-interview" class="btn btn-outline-light px-4" target="_blank">
                         <i class="bi bi-github me-2"></i>View Source
-                    </a>
-                </div>
-                
-                <!-- GitHub Stats & Sponsor -->
-                <div class="github-stats d-flex align-items-center flex-wrap">
-                    <!-- Star Button -->
-                    <div class="d-inline-flex align-items-center">
-                        <i class="bi bi-star-fill text-warning me-2"></i>
-                        <iframe src="https://ghbtns.com/github-btn.html?user=RezaSi&repo=go-interview-practice&type=star&count=true" 
-                                frameborder="0" scrolling="0" width="100" height="20" title="GitHub Stars"></iframe>
-                    </div>
-                    
-                    <!-- Sponsor Button -->
-                    <a href="https://github.com/sponsors/RezaSi" 
-                       class="btn btn-sm btn-sponsor d-inline-flex align-items-center px-3 py-2"
-                       target="_blank"
-                       title="Support this project">
-                        <i class="bi bi-heart-fill me-2" style="font-size: 0.8rem;"></i>
-                        Sponsor
                     </a>
                 </div>
                 
@@ -243,8 +224,11 @@
                                         <small class="text-muted">{{if $.UserAttempts}}{{countPackageAttemptsForPackage $.UserAttempts .Package}}{{else}}0{{end}}/{{len .LearningPath}} challenges</small>
                                     </div>
                                     <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-success" role="progressbar" 
-                                             style="width: {{if $.UserAttempts}}{{calculateProgress (countPackageAttemptsForPackage $.UserAttempts .Package) (len .LearningPath)}}{{else}}0{{end}}%"></div>
+                                        {{if $.UserAttempts}}
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{calculateProgress (countPackageAttemptsForPackage $.UserAttempts .Package) (len .LearningPath)}}%"></div>
+                                        {{else}}
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                                        {{end}}
                                     </div>
                                 </div>
                                 

@@ -1,3 +1,4 @@
+// hello - Interview Simulator Main Initialization
 package main
 
 import (
@@ -27,6 +28,7 @@ func main() {
 	executionService := services.NewExecutionService()
 	packageService := services.NewPackageService()
 	aiService := services.NewAIService()
+	coachService := services.NewInterviewCoachService(aiService)
 
 	// Load data
 	log.Println("Loading challenges...")
@@ -44,6 +46,8 @@ func main() {
 		log.Fatalf("Failed to load packages: %v", err)
 	}
 
+	log.Println("Initializing AI Interview Coach...")
+
 	// Initialize server
 	srv := server.NewServer(
 		content,
@@ -53,6 +57,7 @@ func main() {
 		executionService,
 		packageService,
 		aiService,
+		coachService,
 	)
 
 	// Setup routes
