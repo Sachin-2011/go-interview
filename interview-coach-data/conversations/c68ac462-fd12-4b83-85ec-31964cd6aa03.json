@@ -1,0 +1,21 @@
+{
+  "question_id": "c68ac462-fd12-4b83-85ec-31964cd6aa03",
+  "messages": [
+    {
+      "id": "5b3554c3-6c67-450e-8e02-0f17a1c9404d",
+      "question_id": "c68ac462-fd12-4b83-85ec-31964cd6aa03",
+      "username": "",
+      "role": "assistant",
+      "content": "Hey there! Don't worry, this question looks a bit intimidating at first, but we'll break it down step by step. Think of me as your friendly guide through a slightly complex maze. By the end, you'll feel much more confident about it!\n\nLet'",
+      "timestamp": "2026-02-20T15:14:55.207191+05:30"
+    },
+    {
+      "id": "21c0fc3a-06da-449a-9c47-73448a02e6ed",
+      "question_id": "c68ac462-fd12-4b83-85ec-31964cd6aa03",
+      "username": "",
+      "role": "assistant",
+      "content": "Hey there! No worries at all, this question looks a bit intimidating at first glance, but we'll break it down piece by piece. Think of me as your friendly guide through the GCP networking jungle!\n\nThis question is a fantastic one because it touches on several real-world challenges and advanced GCP features. Let's demystify it together.\n\n---\n\n### 1. What the question is *really* asking\n\nAt its core, the interviewer wants to know if you can design a secure and highly available network setup in GCP where:\n\n*   **You have an application** that needs to talk to the internet.\n*   **BUT, you can't let it talk directly.** All its internet-bound",
+      "timestamp": "2026-02-20T15:15:09.4399439+05:30"
+    }
+  ]
+}

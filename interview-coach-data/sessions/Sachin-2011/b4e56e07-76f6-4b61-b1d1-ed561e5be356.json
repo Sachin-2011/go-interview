@@ -1,0 +1,159 @@
+{
+  "session_id": "b4e56e07-76f6-4b61-b1d1-ed561e5be356",
+  "username": "Sachin-2011",
+  "job_role": "GCP Networking",
+  "job_description": "ob description\n\nYour Role\n\nWe are hiring an GCP Networking (Google Cloud Platform Networking/ Google Cloud Networking) with experience range of 9 to 12 years of work experience\n\nProficient in implementing network security controls, including firewall rules, IAM policies, and policy based routes\nStrong hands on expertise in VPC design, subnetting, and routing for single and multi region deployments.\nStrong hands on experience with GCP networking (VPC, Cloud Interconnect, Cloud Router, Load Balancing, Cloud Armor, VPN, Policy Based Routes)\nStrong hands on experience with AWS networking (VPC, Direct Connect, Transit Gateway, Route 53, ELB, VPN to Direct Connect migrations)\nDeep understanding of TCP/IP, BGP, DNS, NAT, VPNs, and firewalls\nExperience with Terraform, Ansible, Python, or Bash\nStrong knowledge of network security, encryption, and IAM\nAWS Certified Advanced Networking Specialty / Google Professional Cloud Network Engineer\nYour Profile\n\nGCP Networking (Google Cloud Platform Networking / Google Cloud Networking)\nVPC (Virtual Private Cloud)\nShift Timings: 5:30 PM Onwards\nWork location: Bangalore, Pune, Mumbai, Hyderabad, Delhi\n\n\nRole: IT \u0026 Information Security - Other\nIndustry Type: IT Services \u0026 Consulting\nDepartment: IT \u0026 Information Security\nEmployment Type: Full Time, Permanent\nRole Category: IT \u0026 Information Security - Other\nEducation\nUG: Any Graduate\nKey Skills\nSkills highlighted with ‘‘ are preferred keyskills",
+  "questions": [
+    {
+      "id": "dc4cec56-4a88-4bb4-9ea9-a3ffdc939b5a",
+      "question": "You need to establish secure, high-bandwidth, and low-latency connectivity between your on-premises data center and a multi-region GCP environment. Describe in detail how you would design and implement this using Cloud Interconnect, Cloud Router, and VPN, ensuring redundancy and optimal routing. Provide Terraform snippets for key components.",
+      "explanation": "Tests deep understanding of hybrid cloud connectivity, redundancy, routing protocols (BGP), and Infrastructure as Code (Terraform) in a complex GCP networking scenario.",
+      "tags": [
+        "GCP Networking",
+        "Hybrid Cloud",
+        "Cloud Interconnect",
+        "Terraform",
+        "BGP"
+      ],
+      "category": "technical",
+      "is_pinned": true,
+      "pinned_at": "2026-02-20T15:14:05.6290482+05:30",
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "637dfed2-6a55-493c-86f3-3948df0c7b6f",
+      "question": "Explain the differences between GCP's Global External Load Balancer, Regional External Load Balancer, and Internal Load Balancer. Provide a scenario for each where it would be the most appropriate choice, and describe how you would configure health checks and backend services for a Global External Load Balancer serving HTTP(S) traffic.",
+      "explanation": "Evaluates knowledge of GCP's load balancing portfolio, their use cases, and practical configuration details, including health checks and backend service management.",
+      "tags": [
+        "GCP Networking",
+        "Load Balancing",
+        "Architecture",
+        "Health Checks"
+      ],
+      "category": "technical",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "c68ac462-fd12-4b83-85ec-31964cd6aa03",
+      "question": "You are tasked with securing a critical application running in a GCP VPC. The application needs to communicate with an external API over the internet, but all outbound traffic must be inspected by a third-party firewall appliance deployed as a VM in a separate shared VPC. How would you implement this using Policy-Based Routes and Shared VPC, ensuring high availability for the firewall appliance?",
+      "explanation": "Tests advanced network security implementation, understanding of Policy-Based Routes, Shared VPC, and designing for high availability in a security context.",
+      "tags": [
+        "GCP Networking",
+        "Network Security",
+        "Policy-Based Routes",
+        "Shared VPC",
+        "Firewalls"
+      ],
+      "category": "technical",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "aa519765-4cb4-4c0b-bee2-29439ed96104",
+      "question": "Write a Python script using the `google-cloud-compute` library to list all VPC networks in a given GCP project and for each VPC, list its associated subnets and their IP ranges. The script should handle pagination if there are many subnets.",
+      "explanation": "Assesses practical scripting skills with GCP APIs, understanding of network resource querying, and handling common programming challenges like pagination.",
+      "tags": [
+        "Python",
+        "GCP API",
+        "Automation",
+        "Scripting",
+        "VPC"
+      ],
+      "category": "technical",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "757295f8-201e-46dc-99dc-51024bb4c8b1",
+      "question": "Describe your experience with designing and implementing multi-region VPC architectures in GCP. What are the key considerations for latency, data egress, and inter-region connectivity, and how would you optimize for these factors when designing a global application?",
+      "explanation": "Focuses on architectural design principles for large-scale GCP deployments, emphasizing performance, cost, and connectivity across regions.",
+      "tags": [
+        "GCP Networking",
+        "Architecture",
+        "Multi-Region",
+        "VPC Design",
+        "Optimization"
+      ],
+      "category": "role-specific",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "581195ad-0770-4802-86e0-830b0cd7a05d",
+      "question": "You have a large existing AWS environment with Direct Connect and Transit Gateway. Your company is migrating some critical applications to GCP. Detail the steps and considerations for establishing secure and efficient hybrid connectivity between your AWS and GCP environments, specifically focusing on network peering, VPNs, and potential Direct Connect to Cloud Interconnect integration strategies.",
+      "explanation": "Tests practical experience with hybrid cloud networking, cross-cloud connectivity patterns, and migration strategies involving both AWS and GCP networking services.",
+      "tags": [
+        "Hybrid Cloud",
+        "AWS Networking",
+        "GCP Networking",
+        "Migration",
+        "Cross-Cloud Connectivity"
+      ],
+      "category": "role-specific",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "aaa6c1d3-27d1-443d-88f5-6d86edc26a6f",
+      "question": "Given your 9-12 years of experience, what are some common networking challenges you've encountered in large-scale GCP deployments, and how did you approach troubleshooting and resolving them? Provide an example of a complex network issue you personally resolved.",
+      "explanation": "Explores the candidate's practical troubleshooting experience, problem-solving methodology, and ability to handle complex real-world networking issues in a GCP context.",
+      "tags": [
+        "Troubleshooting",
+        "Problem Solving",
+        "GCP Networking",
+        "Incident Management",
+        "Debugging"
+      ],
+      "category": "role-specific",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "8287ac9f-010b-4055-80ab-f4a24393b304",
+      "question": "Describe a situation where you had to quickly learn a new networking technology or service to solve a critical problem. What was the technology, how did you approach learning it, and what was the outcome?",
+      "explanation": "Assesses the candidate's adaptability, self-learning capabilities, and ability to acquire new skills under pressure, which is crucial in a rapidly evolving cloud environment.",
+      "tags": [
+        "Adaptability",
+        "Learning Agility",
+        "Problem Solving",
+        "Self-Starter"
+      ],
+      "category": "aptitude",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "9f3bc6ca-4165-41b8-862f-e53e3593e4d2",
+      "question": "You've designed a complex GCP network architecture, but a senior stakeholder or another team raises significant concerns about its security or cost implications. How would you address their concerns, present your rationale, and potentially incorporate their feedback into the design?",
+      "explanation": "Tests communication, negotiation, stakeholder management, and the ability to defend technical decisions while remaining open to constructive criticism.",
+      "tags": [
+        "Communication",
+        "Stakeholder Management",
+        "Collaboration",
+        "Conflict Resolution",
+        "Design Review"
+      ],
+      "category": "aptitude",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    },
+    {
+      "id": "273becf2-65cd-4154-8b55-056e66312165",
+      "question": "Tell me about a time you had to mentor a junior engineer or lead a small team on a complex networking project. What challenges did you face, and how did you ensure the project's success and the team's development?",
+      "explanation": "Evaluates leadership potential, mentoring skills, project management capabilities, and the ability to foster team growth, relevant for a senior role.",
+      "tags": [
+        "Leadership",
+        "Mentorship",
+        "Teamwork",
+        "Project Management",
+        "Coaching"
+      ],
+      "category": "aptitude",
+      "is_pinned": false,
+      "generated_at": "2026-01-29T11:35:17.2963038+05:30"
+    }
+  ],
+  "created_at": "2026-01-29T11:35:00.1976017+05:30",
+  "updated_at": "2026-02-20T15:14:05.6290482+05:30"
+}

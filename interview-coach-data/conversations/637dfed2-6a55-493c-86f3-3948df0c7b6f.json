@@ -1,0 +1,13 @@
+{
+  "question_id": "637dfed2-6a55-493c-86f3-3948df0c7b6f",
+  "messages": [
+    {
+      "id": "3a1534cc-c1b5-4c42-b8e1-eee54e6fca1b",
+      "question_id": "637dfed2-6a55-493c-86f3-3948df0c7b6f",
+      "username": "",
+      "role": "assistant",
+      "content": "Hey there! This is a fantastic question, and it's super common in interviews for cloud roles. Don't worry, we'll break it down step-by-step. Think of me as your friendly guide through the GCP load balancer jungle!\n\n---\n\n### Understanding the Interview",
+      "timestamp": "2026-02-20T15:14:34.8296415+05:30"
+    }
+  ]
+}

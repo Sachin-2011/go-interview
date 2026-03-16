@@ -1,5 +1,9 @@
 .idea/
 
+# Compiled binaries
+*.exe
+*.out
+
 # Environment files containing API keys
 .env
 web-ui/.env
